@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "crates/trace-rpc",
+    "crates/trace-ir",
+    "crates/cli",
+]
+
+resolver = "2"
