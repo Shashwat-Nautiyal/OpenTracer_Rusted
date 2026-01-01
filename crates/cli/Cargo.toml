@@ -8,3 +8,4 @@ trace-rpc = { path = "../trace-rpc" }
 trace-ir  = { path = "../trace-ir" }
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

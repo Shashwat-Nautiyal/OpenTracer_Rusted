@@ -16,7 +16,7 @@ pub struct RawTrace {
 // configuration for acquiring traces
 pub struct TraceConfig {
     pub rpc_url: String,
-    out_dir: PathBuf,
+    pub out_dir: PathBuf,
 }
 
 // will return string to make rpc req
@@ -108,8 +108,9 @@ impl TraceFetcher {
 
 
     }
+
     // Path is borrowed and cannot be modified
-    async fn stream_rpc_response(&self, payload: &str, out_path: &Path )->Result<()>{
+    async fn stream_rpc_response(&self, payload: &str, out_path: &Path ) -> Result<()>{
         let mut res = self.client
         .post(&self.config.rpc_url)
         .header("Content-Type", "application/json")
