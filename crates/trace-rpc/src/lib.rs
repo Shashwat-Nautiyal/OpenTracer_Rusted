@@ -22,22 +22,22 @@ pub struct TraceConfig {
 // will return string to make rpc req
 pub fn debug_trace_payload(tx_hash: &str) -> String {
     // raw string
-    format!{
+    format!(
         r#"{{
             "jsonrpc": "2.0",
-            "id": "1",
+            "id": 1,
             "method": "debug_traceTransaction",
             "params": [
                 "{}",
                 {{
                     "disableStack": false,
                     "disableMemory": true,
-                    "disableStorage": true,
+                    "disableStorage": true
                 }}
             ]
         }}"#,
         tx_hash
-    }
+    )
 }
 
 pub fn receipt_payload(tx_hash: &str) -> String{
@@ -69,7 +69,7 @@ impl TraceFetcher {
     }
 
     pub async fn fetch_transaction(&self, tx_hash: &str) -> Result<RawTrace> {
-
+        
         let base_path = self.config.out_dir.join(tx_hash);
 
         if !base_path.exists() {
@@ -80,15 +80,15 @@ impl TraceFetcher {
         let receipt_path = base_path.join("receipt.json");
         let metadata_path = base_path.join("metadata.json");
 
-        println!("[{}] Requesting Debug trace ...", tx_hash);
-        let trace_rpc_payload = debug_trace_payload(tx_hash);
-        self.stream_rpc_response(&trace_rpc_payload, &trace_path).await
-        .context("Failed to download trace");
+        // println!("[{}] Requesting Debug trace ...", tx_hash);
+        // let trace_rpc_payload = debug_trace_payload(tx_hash);
+        // self.stream_rpc_response(&trace_rpc_payload, &trace_path).await
+        // .context("Failed to download trace")?;
 
         println!("[{}] Requesting receipt ...", tx_hash);
         let receipt_rpc_payload = receipt_payload(tx_hash);
         self.stream_rpc_response(&receipt_rpc_payload, &receipt_path).await.
-        context("Failed to download receipt");
+        context("Failed to download receipt")?;
 
         let metadata = json!({
             "tx_hash": tx_hash,
@@ -134,10 +134,3 @@ impl TraceFetcher {
 }
 
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    
-   
-}
