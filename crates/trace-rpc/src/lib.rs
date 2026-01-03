@@ -5,6 +5,8 @@ use reqwest::Client;
 use tokio::fs::{self, File};
 use tokio::io::AsyncWriteExt;
 
+mod validation;
+
 // one fully acquired tx trace
 pub struct RawTrace {
     pub tx_hash: String,
@@ -62,8 +64,12 @@ pub struct TraceFetcher {
 
 impl TraceFetcher {
     pub fn new(config: TraceConfig) -> Self {
+        let client = Client::builder()
+                    .danger_accept_invalid_certs(true)
+                    .build()
+                    .unwrap();
         Self{
-            client: Client::new(), 
+            client, 
             config
         }
     }
@@ -80,10 +86,10 @@ impl TraceFetcher {
         let receipt_path = base_path.join("receipt.json");
         let metadata_path = base_path.join("metadata.json");
 
-        // println!("[{}] Requesting Debug trace ...", tx_hash);
-        // let trace_rpc_payload = debug_trace_payload(tx_hash);
-        // self.stream_rpc_response(&trace_rpc_payload, &trace_path).await
-        // .context("Failed to download trace")?;
+        println!("[{}] Requesting Debug trace ...", tx_hash);
+        let trace_rpc_payload = debug_trace_payload(tx_hash);
+        self.stream_rpc_response(&trace_rpc_payload, &trace_path).await
+        .context("Failed to download trace")?;
 
         println!("[{}] Requesting receipt ...", tx_hash);
         let receipt_rpc_payload = receipt_payload(tx_hash);
@@ -98,6 +104,16 @@ impl TraceFetcher {
         });
 
         fs::write(&metadata_path, serde_json::to_string_pretty(&metadata)?).await?;
+
+        println!(" Validating trace integrity for [{}] ", tx_hash);
+        match validation::validate_trace_file(&trace_path) {
+            Ok(_) => println!("Trace is Valid!!"),
+            Err(e) => {
+                let _ = tokio::fs::remove_file(&trace_path).await;
+                return Err(e.context("Trace validation failed"))
+                
+            }
+        }
 
         Ok(RawTrace{
             tx_hash: tx_hash.to_string(),
