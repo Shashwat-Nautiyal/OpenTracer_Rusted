@@ -86,10 +86,10 @@ impl TraceFetcher {
         let receipt_path = base_path.join("receipt.json");
         let metadata_path = base_path.join("metadata.json");
 
-        println!("[{}] Requesting Debug trace ...", tx_hash);
-        let trace_rpc_payload = debug_trace_payload(tx_hash);
-        self.stream_rpc_response(&trace_rpc_payload, &trace_path).await
-        .context("Failed to download trace")?;
+        // println!("[{}] Requesting Debug trace ...", tx_hash);
+        // let trace_rpc_payload = debug_trace_payload(tx_hash);
+        // self.stream_rpc_response(&trace_rpc_payload, &trace_path).await
+        // .context("Failed to download trace")?;
 
         println!("[{}] Requesting receipt ...", tx_hash);
         let receipt_rpc_payload = receipt_payload(tx_hash);
@@ -106,10 +106,10 @@ impl TraceFetcher {
         fs::write(&metadata_path, serde_json::to_string_pretty(&metadata)?).await?;
 
         println!(" Validating trace integrity for [{}] ", tx_hash);
-        match validation::validate_trace_file(&trace_path) {
+        match validation::validate_trace_file(&receipt_path) {
             Ok(_) => println!("Trace is Valid!!"),
             Err(e) => {
-                let _ = tokio::fs::remove_file(&trace_path).await;
+                //let _ = tokio::fs::remove_file(&trace_path).await;
                 return Err(e.context("Trace validation failed"))
                 
             }
@@ -134,7 +134,10 @@ impl TraceFetcher {
         .send()
         .await?;
 
+        
+
         res.error_for_status_ref()?;
+        println!("receipt: {:?}", res);
 
         let mut file = File::create(out_path).await?;
 

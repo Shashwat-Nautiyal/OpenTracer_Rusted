@@ -5,7 +5,7 @@ use anyhow::Result;
 #[tokio::main]
 async fn main() -> Result<()> {
 
-    let rpc_url = "https://lb.drpc.live/ethereum/AgxCzq-XQEmboYzULX9V3HcahbjM6NwR8JdM_qr8MPTs".to_string();
+    let rpc_url = "https://eth-mainnet.g.alchemy.com/v2/eylw7FRc9kKHz41rQPRziikP-a1DiKU8".to_string();
     let out_dir = PathBuf::from("./data/raw_traces");
     let tx_hash = "0x9e63085271890a141297039b3b711913699f1ee4db1acb667ad7ce304772036b";
 
