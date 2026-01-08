@@ -1,4 +1,4 @@
-##Stage 1 invariants (lock these mentally)
+## Stage 1 invariants (lock these mentally)
 
 - Lossless
 Must be able to replay the trace byte for byte later.
@@ -11,8 +11,23 @@ trace-rpc crate should act as a translation layer. For an new client we just nee
 
 - Deterministic artifacts
 Same tx, same node, same output bytes.
+newtype pattern applied correctly: pay a tiny upfront cost for massive long-term flexibility and safety in a complex domain like EVM trac
+## Stage 2
+
+- create a Rust-based model of the EVM's instruction-level execution.
+- parsing the raw JSON trace (e.g., the structLogs array) and converting it into your own custom data structures
+- everything in the EVM is built around this 256-bit fixed-size unit: word
+- using Word wrapper for U256 in evm_traces (newtype pattern applied correctly)
+Chosen so that it is compatible with outputs of keccak256
+This allows to change the underlying datatype and add metadata to the 
 
 ## Learnings
+- An invariant is a property that always held across past executions. 
+```
+- security boundaries
+- protocol assumptions
+- upgrade risks
+```
 - Expose artifacts instead of json sturctures. As soon as you get the JSON from the node, immediately turn it into your own clean custom Rust types. Thin wrappers like serde_json::Value must not flow in code.
 Bad practice => causes full tree materialization
 serde_json::from_str or from_slice loads the entire JSON into memory first, then parses it.
@@ -36,3 +51,18 @@ visitor determies what to do with those tokens
 
 Inherent methods (defined directly on the struct) can be called with just the struct in scope
 Trait methods can ONLY be called when the trait is imported
+
+- In runtime taint analysis.You track:
+```
+- where a value originated
+- how it propagates
+- where it ends up
+
+Example questions:
+
+Does msg.sender influence storage slot X?
+
+Does user input affect external calls?
+
+Does an oracle value influence a transfer?
+```
