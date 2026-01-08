@@ -66,3 +66,5 @@ Does user input affect external calls?
 
 Does an oracle value influence a transfer?
 ```
+
+- Scope: &str can reference temporary data; &'static str must live forever
