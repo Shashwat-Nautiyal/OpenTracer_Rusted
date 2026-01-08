@@ -68,3 +68,9 @@ Does an oracle value influence a transfer?
 ```
 
 - Scope: &str can reference temporary data; &'static str must live forever
+- macro rules
+```
+- $( ... ),*  : repetition pattern
+- $(,)  : for trailing comma
+- $halt:expr any expression (true, false, function call, const)
+
