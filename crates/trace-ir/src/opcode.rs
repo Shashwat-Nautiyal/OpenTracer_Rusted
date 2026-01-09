@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{ Deserialize, Deserializer, Serialize};
 
 #[derive(Debug, Clone, Copy)]
 pub struct OpcodeInfo {
@@ -14,15 +14,15 @@ pub struct OpcodeInfo {
 
 macro_rules! define_opcodes {
     (
-        $($name:ident = $byte.literal {in: $in:literal, out: $out:literal, halt: $halt.expr, call: $call.expr}),*
-        &(,)?
-    ) = > {
+        $($name:ident = $byte:literal {in: $in:literal, out: $out:literal, halt: $halt:expr, call: $call:expr}),*
+        $(,)?
+    ) => {
 
-        #[derive(Debug, Clone, Copy. Eq, PartialEq, Hash)]
+        #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Serialize)]
         #[repr(u8)]    // means the enum uses the actual byte as its discriminator.
         pub enum Opcode {
             $($name = $byte, )*
-            INVALID: 0xFE
+            INVALID = 0xFE
         }
 
         impl Opcode {
@@ -36,28 +36,28 @@ macro_rules! define_opcodes {
 
             }
 
-            pub fb info(&self) -> OpcodeInfo {
+            pub fn info(&self) -> OpcodeInfo {
                 match self {
                     $(
                         Opcode::$name => OpcodeInfo{
                             name: stringify!($name),
                             bytes: $byte,
-                            inputs: $in
+                            inputs: $in,
                             outputs: $out,
                             is_call: $call,
                             is_halt: $halt,
                         },
                     )*
-                    $(
-                        Opcode::INVALID => OpcodeInfo{
-                            name: "INVALID",
-                            bytes: 0xFE,
-                            inputs: 0,
-                            outputs: 0,
-                            is_call: false,
-                            is_halt: true,
-                        }
-                    )
+                    
+                    Opcode::INVALID => OpcodeInfo{
+                        name: "INVALID",
+                        bytes: 0xFE,
+                        inputs: 0,
+                        outputs: 0,
+                        is_call: false,
+                        is_halt: true,
+                    }
+                    
                 }
             }
         }
@@ -248,3 +248,29 @@ define_opcodes! {
     SELFDESTRUCT = 0xFF { in: 1, out: 0, halt: true,  call: false },
 }
 
+
+// if not this then it would look smthng like thispub enum Opcode {
+//     STOP = 0x00,
+//     ADD = 0x01,
+//     MUL = 0x02,
+//     // ... 140+ more variants
+// }
+
+// impl Opcode {
+//     pub fn from_u8(byte: u8) -> Self {
+//         match byte {
+//             0x00 => Opcode::STOP,
+//             0x01 => Opcode::ADD,
+//             0x02 => Opcode::MUL,
+//             // ... 140+ more match arms
+//         }
+//     }
+    
+//     pub fn info(&self) -> OpcodeInfo {
+//         match self {
+//             Opcode::STOP => OpcodeInfo { name: "STOP", bytes: 0x00, inputs: 0, outputs: 0, is_halt: true, is_call: false },
+//             Opcode::ADD => OpcodeInfo { name: "ADD", bytes: 0x01, inputs: 2, outputs: 1, is_halt: false, is_call: false },
+//             // ... 140+ more match arms
+//         }
+//     }
+// }

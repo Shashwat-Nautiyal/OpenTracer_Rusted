@@ -19,7 +19,7 @@ newtype pattern applied correctly: pay a tiny upfront cost for massive long-term
 - everything in the EVM is built around this 256-bit fixed-size unit: word
 - using Word wrapper for U256 in evm_traces (newtype pattern applied correctly)
 Chosen so that it is compatible with outputs of keccak256
-This allows to change the underlying datatype and add metadata to the 
+This allows to change the underlying datatype and add metadata 
 
 ## Learnings
 - An invariant is a property that always held across past executions. 
