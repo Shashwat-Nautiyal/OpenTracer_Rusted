@@ -62,6 +62,7 @@ macro_rules! define_opcodes {
             }
         }
         
+        // json -> string -> &str -> Opcode matching
         impl <'de> Deserialize <'de> for Opcode {
             fn deserialize<D>(deserializer : D) -> Result<Self, D::Error> 
             where

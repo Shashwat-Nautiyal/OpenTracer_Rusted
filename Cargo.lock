@@ -2355,6 +2355,7 @@ dependencies = [
  "alloy-primitives",
  "hex",
  "serde",
+ "serde_json",
  "thiserror",
 ]
 
