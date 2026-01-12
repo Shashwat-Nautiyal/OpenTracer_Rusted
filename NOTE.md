@@ -37,6 +37,14 @@ serde_json::from_str or from_slice loads the entire JSON into memory first, then
 - await => synchronous exec but non-blocking | the thread gets freed and returns back to tokio runtime for other opoerations
 - PathBuf (owns the data on heap, can be modified) , Path (borrows reference, cannot be modified, like &str)
 - stage-1 should only be about procuring traces and no parsing of the trace. The validation must be structural rather than semantic
+- lib.rs is the public face of our library crate.
+It decides what is visible to users and hides our internal module structure.
+```
+// → users still have to write my_crate::word::Word
+mod word;
+// → users can write: use my_crate::Word;
+pub use word::Word;
+```
 
 
 ## Conventions

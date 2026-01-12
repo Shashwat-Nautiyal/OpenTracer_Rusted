@@ -1,8 +1,12 @@
+// private modules
 mod word;
 mod opcode;
 
+pub mod call_frame;
+pub use call_frame::{CallFrame, CallType};
 pub use word::Word;
 pub use opcode::{Opcode, OpcodeInfo};
+
 
 use serde::{Serialize, Deserialize};
 use std::sync::Arc;

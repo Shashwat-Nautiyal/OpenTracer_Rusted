@@ -33,8 +33,8 @@ pub fn debug_trace_payload(tx_hash: &str) -> String {
                 "{}",
                 {{
                     "disableStack": false,
-                    "disableMemory": true,
-                    "disableStorage": true
+                    "disableMemory": false,
+                    "disableStorage": false
                 }}
             ]
         }}"#,
