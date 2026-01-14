@@ -21,6 +21,14 @@ newtype pattern applied correctly: pay a tiny upfront cost for massive long-term
 Chosen so that it is compatible with outputs of keccak256
 This allows to change the underlying datatype and add metadata 
 
+## Stage 3
+- CallFrame requires calldata and return_data. These live in memory. Without memory snapshots, we cannot extract the actual bytes sent between contracts.
+
+- If the opcode transfers control to different code or changes the execution context → new call frame
+- If the opcode is just operating on the current stack/memory/storage → same call frame
+- depth is our primary signal for detecting when the EVM enters or exits a new call frame.
+- for geth client depth starts from 1, for erigon starts from 0 
+
 ## Learnings
 - An invariant is a property that always held across past executions. 
 ```
@@ -52,6 +60,7 @@ pub use word::Word;
 - "Visitor" design pattern is fundamental to data parsing
 deserializer/itr reads tokens from json obj
 visitor determies what to do with those tokens
+- for geth client depth starts from 1, for erigon starts from 0 
 
 
 ## POI's
